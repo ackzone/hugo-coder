@@ -9,22 +9,39 @@
     {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
 
-    {{ "<!-- ENTERING partial seo-og.html (open graph) -->" | safeHTML }}
-    {{ $baseurl := .Site.BaseURL }}
+    <meta property="og:title" content="{{ .Title }}">
     {{ if .IsPage }}
-    <!-- Required Open Graph Info -->
-    <meta property="og:title" content="{{ .Title }}{{ if ne .Title .Site.Title }} : {{ .Site.Title }}{{ end }}" />
-    {{ with .Params.images }}{{ range first 6 . }}<meta property="og:image" content="{{ if in . "http" }}{{ . }}{{ else }}{{ $baseurl }}{{ . }}{{ end }}" />
+    <meta property="og:type" content="article">
+    <meta property="article:published_time" content="{{ .Date.Format "2006-01-02" }}">
+    {{ else }}
+    <meta property="og:type" content="website">
     {{ end }}
+    <meta property="og:description" content="{{ .Description }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    <meta property="og:site_name" content="{{ .Site.Title }}">
+    {{ if .Params.thumbnail }}
+    <meta property="og:image" content="{{ .Site.BaseURL }}{{ .Params.thumbnail }}">
     {{ end }}
-    <meta property="og:url" content="{{ .Permalink }}" />
-    <!-- Optional Open Graph Info -->
-    <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ end }}{{ end }}" />
-    <meta property="og:locale" content="{{ if .Params.locale }}{{ .Params.locale }}{{ else }}en_US{{ end }}" />
-    {{ with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
-    {{ with .Params.videos }}{{ range . }}
-    <meta property="og:video" content="{{ . }}" />
+    {{ range .Params.tags }}
+    <meta property="og:tags" content="{{ . }}">
     {{ end }}
+    <!-- End of Open Graph -->
+    <!-- Start of Twitter -->
+    {{ if .Site.Params.twitter_card_whitelisted }}
+        {{ if .Params.twitter_summary }}
+    <meta property="twitter:card" content="{{ .Params.twitter_summary }}">
+        {{ else if .Description }}
+    <meta property="twitter:card" content="{{ .Description }}">
+        {{ else }}
+    <meta property="twitter:card" content="{{ .Title }}">
+        {{ end }}
+    {{ end }}
+    <meta property="twitter:description" content="{{ .Description }}">
+    <meta property="twitter:title" content="{{ .Title }}">
+    {{ if .Params.thumbnail }}
+    <meta property="twitter:image" content="{{ .Site.BaseURL }}{{ .Params.thumbnail }}">
+    {{ end }}
+    <!-- End of Twitter -->
     
     <base href="{{ .Site.BaseURL }}">
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
