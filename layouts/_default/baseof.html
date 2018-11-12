@@ -9,6 +9,23 @@
     {{ with .Site.Params.description }}<meta name="description" content="{{ . }}">{{ end }}
     {{ with .Site.Params.keywords }}<meta name="keywords" content="{{ . }}">{{ end }}
 
+    {{ "<!-- ENTERING partial seo-og.html (open graph) -->" | safeHTML }}
+    {{ $baseurl := .Site.BaseURL }}
+    {{ if .IsPage }}
+    <!-- Required Open Graph Info -->
+    <meta property="og:title" content="{{ .Title }}{{ if ne .Title .Site.Title }} : {{ .Site.Title }}{{ end }}" />
+    {{ with .Params.images }}{{ range first 6 . }}<meta property="og:image" content="{{ if in . "http" }}{{ . }}{{ else }}{{ $baseurl }}{{ . }}{{ end }}" />
+    {{ end }}
+    {{ end }}
+    <meta property="og:url" content="{{ .Permalink }}" />
+    <!-- Optional Open Graph Info -->
+    <meta property="og:description" content="{{ if .Description }}{{ .Description }}{{ else }}{{if .IsPage}}{{ .Summary }}{{ end }}{{ end }}" />
+    <meta property="og:locale" content="{{ if .Params.locale }}{{ .Params.locale }}{{ else }}en_US{{ end }}" />
+    {{ with .Params.audio }}<meta property="og:audio" content="{{ . }}" />{{ end }}
+    {{ with .Params.videos }}{{ range . }}
+    <meta property="og:video" content="{{ . }}" />
+    {{ end }}
+    
     <base href="{{ .Site.BaseURL }}">
     <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
 
